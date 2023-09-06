@@ -1,0 +1,267 @@
+﻿@using HongDucStore.Models;
+@{
+    ViewBag.Title = "About";
+    var listCart = (List<CartItem>)Session["Cart"];
+    var khachHangInfo = (KhachHang)Session["KhachHang"];
+    var listChiNhanh = (List<ChiNhanh>)ViewBag.danhSachChiNhanh;
+    int allPrice = 0;
+}
+<table class="table table-bordered">
+    <tr>
+        <th>STT</th>
+        <th>Tên sản phẩm</th>
+        <th>Màu sắc</th>
+        <th>Số lượng</th>
+        <th>Tổng tiền</th>
+        <th>Xóa</th>
+        <th>Thanh toán</th>
+    </tr>
+    @if (Session["Cart"] != null)
+    {
+        int Stt = 1;
+        foreach (var item in listCart)
+        {
+            <tr id="row_@item.IdItem" class="itemTable">
+                <td>@Stt</td>
+                <td><img src="~/@item.mauSac.HinhAnh" width="100" /> @item.sanPham.TenSanPham</td>
+                <td>@item.mauSac.TenMau</td>
+                <td>
+                    <button class="btn btn-info" onclick="pushCart('@item.IdItem')"><i style="color:white;" class="fas fa-plus"></i></button>
+                    <input id="txtSoLuongMua" data-productPrice="@item.sanPham.GiaBan" value="@item.SoLuongMua" disabled min="1" style="height:35px;" />
+                    <button class="btn btn-info" onclick="minusCart('@item.IdItem')"><i style="color:white;" class="fas fa-minus"></i></button>
+                </td>
+                @{
+                    int Price;
+                    if (item.mauSac.Delta == null)
+                    {
+                        if(item.sanPham.GiaGiam != null)
+                        {
+                            Price = Convert.ToInt32((item.sanPham.GiaGiam * item.SoLuongMua));
+                        }
+                        else
+                        {
+                            Price = Convert.ToInt32((item.sanPham.GiaBan * item.SoLuongMua));
+                        }
+
+                    }
+                    else
+                    {
+                        if (item.sanPham.GiaGiam != null)
+                        {
+                            Price = Convert.ToInt32((item.sanPham.GiaGiam * item.SoLuongMua) + item.mauSac.Delta);
+                        }
+                        else
+                        {
+                            Price = Convert.ToInt32((item.sanPham.GiaBan * item.SoLuongMua) + item.mauSac.Delta);
+                        }
+                    }
+                    // tính tổng tiền
+                    allPrice += Price;
+                }
+                <td id="productPrice" data-allProduct="@allPrice">@Price.ToString("N0")<span>VND</span></td>
+                <td>
+                    <button id="btnDelete" onclick="deleteCartItem('@item.IdItem')" class="btn btn-danger">Xóa</button>
+                </td>
+                <td>
+                    <a id="btnDelete" class="btn btn-primary">Đăng ký</a>
+                </td>
+            </tr>
+            Stt++;
+        }
+    }
+    else
+    {
+        <tr>Không có sản phẩm nào</tr>
+    }
+</table>
+<div>
+    <span class="col-3" id="allPrice" data-totalPrice="@allPrice">Tổng tiền : @allPrice.ToString("N0") <span>VND</span></span>
+    @if (allPrice > 0)
+    {
+        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#confirmOrder">Đăng ký thời gian nhận hàng</button>
+    }
+</div>
+<!-- order cofirm -->
+<div class="modal fade" id="confirmOrder" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="exampleModalLabel">THANH TOÁN ĐƠN HÀNG</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form>
+                    <div class="form-group">
+                        <label class="form-label">Họ và tên</label>
+                        <input name="TenKhachHang" type="text" value="@khachHangInfo.TenKhachHang" class="form-control" required />
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Số điện thoại</label>
+                        <input id="SoDienThoai" value="@khachHangInfo.SoDienThoai" type="tel" class="form-control" required />
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Chọn chi nhánh nhận hàng</label>
+                        <select class="form-control" name="MaChiNhanh" id="MaChiNhanh">
+                            <option value="0">----Chọn----</option>
+                            @foreach (var item in listChiNhanh)
+                            {
+                                <option value="@item.MaChiNhanh">@item.TenChiNhanh</option>
+                            }
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Chọn thời gian nhận hàng</label>
+                        <input type="datetime-local" required id="ThoiGianNhanHang" class="form-control" /> 
+                    </div>
+                    <hr />
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                        <button type="submit" class="btn btn-primary" id="btnCheckOut">Thanh toán</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- script -->
+<script type="text/javascript">
+    function deleteCartItem(idCart) {
+        $.ajax({
+            type: "Post",
+            url: "/Cart/DeleteItem/",
+            data: {
+                idCart: idCart
+            },
+            dataType: "Json",
+            success: function (reponse) {
+                alert(reponse.msg);
+                window.location.reload(true);
+            }
+        });
+    }
+
+
+    function pushCart(idCart) {
+        var getValue = parseInt($('#txtSoLuongMua').val());
+        var getPrice = parseInt($('#txtSoLuongMua').attr('data-productPrice'));
+        var getTotal = parseInt($('#allPrice').attr('data-totalPrice'));
+        //
+        $.ajax({
+            type: "Post",
+            url: "/Cart/UpdateTang/",
+            data: {
+                idCart: idCart,
+                quantity: getValue
+            },
+            dataType: "Json",
+            success: function (result) {
+                console.log(result.code == 200);
+                if (result.code === 200) {
+                    alert(result.msg);
+                    ////////
+                    var updateSoLuong = getValue + 1;
+                    $('#txtSoLuongMua').val(updateSoLuong);
+                    var totalPrice = updateSoLuong * getPrice;
+                    var total = getTotal + getPrice;
+                    $('#productPrice').text(convertMoneyVND(totalPrice));
+                    $('#productPrice').val(totalPrice);
+                    $('#allPrice').text('Tổng tiền: ' + convertMoneyVND(total));
+                    $('#allPrice').attr('data-totalPrice', total);
+                    $('#checkOutPrice').text('Tổng tiền' + convertMoneyVND(total));
+                    $('#checkOutPrice').attr('data-allPrice',total);
+                }
+                else {
+                    alert(result.msg);
+                }
+            }
+        });
+    }
+
+
+    function minusCart(idCart) {
+        var getValue = parseInt($('#txtSoLuongMua').val());
+        var getPrice = parseInt($('#txtSoLuongMua').attr('data-productPrice'));
+        var getTotal = parseInt($('#allPrice').attr('data-totalPrice'));
+        if (getValue < 2) {
+            alert("Vui lòng chọn số lượng lớn hơn 1");
+            return;
+        }
+        else {
+            $.ajax({
+                type: "Post",
+                url: "/Cart/UpdateGiam/",
+                data: {
+                    idCart: idCart
+                },
+                dataType: "Json",
+                success: function (result) {
+                    if (result.code == 200) {
+                        alert(result.msg);
+                        var updateSoLuong = getValue - 1;
+                        var totalPrice = updateSoLuong * getPrice;
+                        var total = getTotal - getPrice;
+                        $('#txtSoLuongMua').val(updateSoLuong);
+                        $('#productPrice').text(convertMoneyVND(totalPrice));
+                        $('#allPrice').text('Tổng tiền: ' + convertMoneyVND(total));
+                        $('#allPrice').attr('data-totalPrice', total);
+                        $('#checkOutPrice').text('Tổng tiền' + convertMoneyVND(total));
+                        $('#checkOutPrice').attr('data-allPrice', total);
+                    }
+                    else {
+                        alert(result.msg);
+                    }
+                }
+            });
+        }
+
+    }
+
+    function convertMoneyVND(x) {
+        return x = x.toLocaleString('it-IT', { style: 'currency', currency: 'VND' });
+    }
+
+    // checkkkkkkkkkkkkkkkkkk out
+    $('#btnCheckOut').click(function () {
+        var maKhachHang = @khachHangInfo.MaKhachHang;
+        var tenKhachHang = $('input[name="TenKhachHang"]').val();
+        var soDienThoai = $('#SoDienThoai').val();
+        var chiNhanh = $('#MaChiNhanh option:selected').val();
+        var thoiGianNhanHang = $('#ThoiGianNhanHang').val();
+
+
+        console.log(maKhachHang, tenKhachHang, soDienThoai, chiNhanh, thoiGianNhanHang)
+
+        if (tenKhachHang == null || soDienThoai == null || chiNhanh == 0 || thoiGianNhanHang == 0) {
+            alert("Vui lòng nhập hoặc chọn đủ thông tin để hoàn thành thao tác đăng ký nhận hàng");
+            return;
+        }
+        else {
+            $.ajax({
+                type: "Get",
+                url: "/Cart/CheckOutCart/",
+                data: {
+                    maKhachHang: maKhachHang,
+                    tenKhachHang: tenKhachHang,
+                    soDienThoai: soDienThoai,
+                    chiNhanh: chiNhanh,
+                    thoiGianNhanHang: thoiGianNhanHang,
+                },
+                dataType: "Json",
+                success: function (result) {
+                    if (result.code === 200) {
+                        alert(result.msg);
+                        $('.itemTable').remove();
+                        $('#allPrice').attr('data-totalPrice', 0);
+                        $('#allPrice').text('Tổng tiền:' + 0 + ' VND');
+                    }
+                    else {
+                        alert(result.msg);
+                    }
+                },
+                error: function (error) {
+                    console.log(error);
+                }
+            });
+        }
+    });
+</script>

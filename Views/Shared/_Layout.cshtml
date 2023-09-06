@@ -1,0 +1,106 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewBag.Title - My ASP.NET Application</title>
+    <!--cdn jquery + ajax-->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
+    <!--cdn boostrap-->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-aFq/bzH65dt+w6FI2ooMVUpc+21e0SRygnTpmBvdBgSdnuTN7QbdgL+OapgHtvPp" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha2/dist/js/bootstrap.bundle.min.js" integrity="sha384-qKXV1j0HvMUeCBQ+QVp7JcfGl760yU08IQ+GpUo5hlbpg51QRiuqHAJz8+BrxE/N" crossorigin="anonymous"></script>
+    <!--cdn ckEditor-->
+    <script src="//cdn.ckeditor.com/4.21.0/standard/ckeditor.js"></script>
+    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+    <!-- font awnsome-->
+    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+</head>
+<body>
+    <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-dark bg-dark">
+        <div class="container">
+            @Html.ActionLink("Application name", "Index", "Home", new { area = "" }, new { @class = "navbar-brand" })
+            <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" title="Toggle navigation" aria-controls="navbarSupportedContent"
+                    aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse d-sm-inline-flex justify-content-between">
+                <ul class="navbar-nav flex-grow-1" style="color:white;">
+                    <li id="home" class="nav-item">@Html.ActionLink("Home", "Index", "Home", new { area = "" }, new { @class = "nav-link" })</li>
+                    <!-- load category -->
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            Sản phẩm
+                        </a>
+                        <ul class="dropdown-menu" id="dropdown">
+                        </ul>
+                    </li>
+                    <li class="nav-item">
+                        <a href="@Url.Action("viewAllPost","Home")" class="nav-link">Bài viết</a>
+                    </li>
+                    <!---->
+                    <li class="nav-item">
+                        <a class="nav-link" href="@Url.Action("ProductAll","Home")">Toàn bộ sản phẩm</a>
+                    </li>
+                    <!---->
+                    @if (Session["KhachHang"] != null)
+                    {
+                        // ép kiểu cho Session
+                        var customer = (HongDucStore.Models.KhachHang)Session["KhachHang"];
+                        //
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <img src="~/@customer.HinhAnh" width="20" style="border-radius:50px;" /> @customer.TenKhachHang
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" href="@Url.Action("MyOrder","Home")">Đơn hàng của tôi</a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item" href="@Url.Action("DangXuat","Home")">Đăng xuất</a></li>
+                            </ul>
+                        </li>
+                        <li class="nav-item">
+                            <a href="@Url.Action("Index","Cart")" class="nav-link"><i class="fas fa-cart-arrow-down"></i></a>
+                        </li>
+                    }
+                    else
+                    {
+                        <li class="nav-item">
+                            <a class="nav-link" href="@Url.Action("UserLogin","Home")">Đăng nhập/Đăng ký</a>
+                        </li>
+                    }
+                </ul>
+                <form class="d-flex" role="search" action="@Url.Action("Search","Home")">
+                    <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search" name="key">
+                    <button class="btn btn-outline-success" type="submit">Search</button>
+                </form>
+            </div>
+        </div>
+    </nav>
+    <div class="container body-content">
+        @RenderBody()
+        <hr />
+        <footer>
+            <p>&copy; @DateTime.Now.Year - My ASP.NET Application</p>
+        </footer>
+    </div>
+</body>
+</html>
+<script type="text/javascript">
+    $(document).ready(function () {
+        loadMenu();
+    });
+
+    function loadMenu() {
+        $.ajax({
+            url: "/Home/LoadMenu/",
+            type: "POST",
+            dataType: "json",
+            success: function (reponse) {
+                var menuHTML = '';
+                $.each(reponse.data,function (key, categoryItem) {
+                    menuHTML += '<li><a class="dropdown-item" href="/Home/loadCategory?idCategory=' + categoryItem['idCategory'] + '">' + categoryItem['nameCategory']+'</a></li>';
+                });
+                $('#dropdown').html(menuHTML);
+            }
+        });
+    }
+</script>

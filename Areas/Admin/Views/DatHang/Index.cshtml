@@ -1,0 +1,97 @@
+﻿@model IEnumerable<HongDucStore.Models.DatHang>
+
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Areas/Admin/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+<h2>QUẢN LÝ ĐẶT HÀNG</h2>
+
+<p>
+    <a href="@Url.Action("Create New", "Create")" class="btn btn-primary">Thêm mới</a>
+</p>
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.ThoiGianNhanHang)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.SoDienThoai)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.TongTien)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.TinhTrangDonHang)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.ChiNhanh.TenChiNhanh)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.KhachHang.TenKhachHang)
+        </th>
+        <th>Chi tiết</th>
+        <th></th>
+    </tr>
+
+@foreach (var item in Model) {
+    <tr>
+        <td>
+            @Html.DisplayFor(modelItem => item.ThoiGianNhanHang)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.SoDienThoai)
+        </td>
+        <td>
+            @item.TongTien.Value.ToString("N0") <span>VND</span>
+        </td>
+        <td>
+            @if (item.TinhTrangDonHang == 0)
+            {
+                <span class="badge text-white text-bg-info">Đơn chưa xác nhận</span>
+            }
+            else if (item.TinhTrangDonHang == 1)
+            {
+                <span class="badge text-white text-bg-info">Đơn đã xác nhận</span>
+            }
+            else if (item.TinhTrangDonHang == 2)
+            {
+                <span class="badge text-white text-bg-info">Đơn hàng chưa thanh toán</span>
+            }
+            else if (item.TinhTrangDonHang == 3)
+            {
+                <span class="badge text-white text-bg-info">Đơn hàng đã thanh toán</span>
+            }
+            else if (item.TinhTrangDonHang == 4)
+            {
+                <span class="badge text-white text-bg-info">Khách đã nhận hàng</span>
+            }
+            else
+            {
+                <span class="badge text-white text-bg-info">Đã hũy</span>
+            }
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.ChiNhanh.TenChiNhanh)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.KhachHang.TenKhachHang)
+        </td>
+        <td>
+            @if (item.TinhTrangDonHang != 5)
+            {
+                <a class="btn btn-outline-success" href="@Url.Action("Index", "DatHangChiTiet", new {idOrder = item.MaDatHang})">Xem chi tiết</a>
+            }
+        </td>
+        <td>
+            @if (item.TinhTrangDonHang != 5)
+            {
+                <a href="@Url.Action("Edit", "DatHang", new {id = item.MaDatHang})" class="btn btn-outline-primary">Sửa</a>
+                <a href="@Url.Action("Delete", "DatHang", new {id = item.MaDatHang})" class="btn btn-outline-danger">Xóa</a>
+            }
+
+        </td>
+    </tr>
+}
+
+</table>

@@ -1,0 +1,69 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewBag.Title - My ASP.NET Application</title>
+    <!--cdn jquery + ajax-->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
+    <!--cdn boostrap-->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-aFq/bzH65dt+w6FI2ooMVUpc+21e0SRygnTpmBvdBgSdnuTN7QbdgL+OapgHtvPp" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha2/dist/js/bootstrap.bundle.min.js" integrity="sha384-qKXV1j0HvMUeCBQ+QVp7JcfGl760yU08IQ+GpUo5hlbpg51QRiuqHAJz8+BrxE/N" crossorigin="anonymous"></script>
+    <!--cdn ckEditor-->
+    <script src="//cdn.ckeditor.com/4.21.0/standard/ckeditor.js"></script>
+</head>
+<body>
+    @if (Session["maNhanVien"] != null)
+    {
+        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-dark bg-dark">
+            <div class="container">
+                @Html.ActionLink("DashBoard", "Index", "Home", new { area = "" }, new { @class = "navbar-brand" })
+                <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" title="Toggle navigation" aria-controls="navbarSupportedContent"
+                        aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse d-sm-inline-flex justify-content-between">
+                    <ul class="navbar-nav flex-grow-1">
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                @if (Session["maNhanVien"] != null)
+                                {
+                                    <img src="~/@Session["hinhAnh"]" width="20" style="border-radius:20px;" /><span> @Session["tenNhanVien"]</span>
+                                }
+                            </a>
+                            <ul class="dropdown-menu">
+                                @if (Convert.ToInt32(Session["quyen"]) == 0)
+                                {
+                                    <li><a class="dropdown-item" href="@Url.Action("Index","ChiNhanh")">Chi nhánh</a></li>
+                                    <li><a class="dropdown-item" href="@Url.Action("Index","DanhMuc")">Danh mục</a></li>
+                                    <li><a class="dropdown-item" href="@Url.Action("Index","DanhMucCon")">Danh mục con</a></li>
+                                    <li><a class="dropdown-item" href="@Url.Action("Index","HangXe")">Hãng xe</a></li>
+                                    <li><a class="dropdown-item" href="@Url.Action("Index","NhanVien")">Nhân viên</a></li>
+                                    <li><hr class="dropdown-divider"></li>
+                                    <li><a class="dropdown-item" href="@Url.Action("Index","SanPham")">Sản phẩm</a></li>
+                                    <li><a class="dropdown-item" href="@Url.Action("Index","DatHang")">Đặt hàng</a></li>
+                                    <li><hr class="dropdown-divider"></li>
+                                    <li><a class="dropdown-item" href="@Url.Action("Index","BaiViet")">Bài viết</a></li>
+                                    <li><a class="dropdown-item" href="@Url.Action("Index","LienHeBanXe")">Liên hệ bán xe</a></li>
+                                }
+                                else if (Convert.ToInt32(Session["quyen"]) == 1)
+                                {
+                                    <li><a class="dropdown-item" href="@Url.Action("Index","SanPham")">Sản phẩm</a></li>
+                                    <li><a class="dropdown-item" href="@Url.Action("Index","BaiViet")">Bài viết</a></li>
+                                }
+                            </ul>
+                        </li>
+                        <li class="nav-item">
+                            <a href="@Url.Action("Logout","Home")" class="nav-link">Đăng xuất</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    }
+    <div class="container body-content">
+        @RenderBody()
+    </div>
+    @RenderSection("scripts", required: false)
+</body>
+</html>

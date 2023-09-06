@@ -1,0 +1,164 @@
+﻿@model IEnumerable<HongDucStore.Models.SanPham>
+@using HongDucStore.Models;
+@{
+    ViewBag.Title = "Home Page";
+    var listColor = (List<MauSac>)ViewBag.listColor;
+    var listCategory = (List<DanhMuc>)ViewBag.listCategory;
+    var listHang = (List<HangXe>)ViewBag.Hang;
+}
+
+<div class="card">
+    <h5 class="card-header bg-primary text-white text-center border-primary" style="font-weight:bold;">TẤT CẢ SẢN PHẨM</h5>
+    <div class="card-body">
+        <div class="container">
+            <div class="row mb-3">
+                <!-- category -->
+                <select class="col-md-3" id="category" style="height:40px;border-radius:20px;">
+                    <option value="0">---- Chọn danh mục ----</option>
+                    @foreach (var itemCategory in listCategory)
+                    {
+                        <option value="@itemCategory.MaDanhMuc">@itemCategory.TenDanhMuc</option>
+                    }
+                </select>
+                <!-- hãng -->
+                <select class="col-md-3" id="Hang" style="height:40px;border-radius:20px;">
+                    <option value="0">---- Chọn hãng ----</option>
+                    @foreach (var itemHang in listHang)
+                    {
+                        <option value="@itemHang.MaHang">@itemHang.TenHang</option>
+                    }
+                </select>
+                <!-- giá-->
+                <div class="col-md-3">
+                    <label>0</label>
+                    <input type="range" min="0" max="100000000" value="0" id="priceFitter" />
+                    <label id="priceFitterVal">0 VND</label>
+                </div>
+                
+
+                <input type="submit" id="btnFitter" value="Lọc" class="col-md-2" />
+            </div>
+            
+            <!--danh sách sản phẩm-->
+            <div class="row" id="listProduct">
+                @if (Model.Count() > 0)
+                {
+                    foreach (var itemProduct in Model.OrderByDescending(m => m.MaSanPham))
+                    {
+                        var Color = listColor.Where(m => m.MaSanPham == itemProduct.MaSanPham && m.isCheck == 0).FirstOrDefault();
+                        <div class="col-md-3">
+                            <div class="card" style="width: 18rem;">
+                                @if (Color != null)
+                                {
+                                    <img class="card-img-top" src="~/@Color.HinhAnh" alt="Card image cap">
+                                }
+                                else
+                                {
+                                    <img class="card-img-top" src="~/Storage/NoImage.jpg" alt="Card image cap">
+
+                                }
+                            <div class="card-body">
+                                <h5 class="card-title text-center">@itemProduct.TenSanPham</h5>
+                                @if (itemProduct.GiaBan != null)
+                                {
+                                    <p class="card-text text-center">@itemProduct.GiaBan.Value.ToString("N0") <span>VND</span></p>
+                                }
+                                @if (itemProduct.GiaGiam != null)
+                                {
+                                    <p class="card-text text-center">@itemProduct.GiaGiam.Value.ToString("N0")<span> VND</span> <del>@itemProduct.GiaBan.Value.ToString("N0") <span>VND</span></del></p>
+                                }
+                                @if (Color != null)
+                                {
+                                    <a href="@Url.Action("Detail","Home",new {idProduct = itemProduct.MaSanPham})" class="btn btn-primary"></a>
+                                }
+
+                            </div>
+                            </div>
+                        </div>
+                    }
+                }
+                else
+                {
+                    <span>Hiện tại không có sản phẩm nào</span>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+
+    $(document).ready(function () {
+        fitterProduct();
+    });
+
+    function fitterProduct() {
+        $('#btnFitter').on('click', function () {
+            var maDanhMuc = $('#category option:selected').val();
+            var maHang = $('#Hang option:selected').val();
+            var priceProduct = $('#priceFitter').val();
+
+            if (maDanhMuc != 0 || maHang != 0 || priceProduct != 0) {
+                $.ajax({
+                    type: 'Post',
+                    url: '/Home/fitterProduct/',
+                    data: {
+                        maHang: maHang,
+                        maDanhMuc: maDanhMuc,
+                        priceProduct: priceProduct
+                    },
+                    dataType: "Json",
+                    success: function (result) {
+                        console.log(result, priceProduct);
+                        if (result.data == "") {
+                            $('#listProduct').html("Không có sản phẩm nào theo điều kiện lọc của bạn");
+                            return;
+                        }
+                        else {
+                            var htmlFitter = '';
+                            $.each(result.data, function (key, itemProduct) {
+                                htmlFitter += '<div class="col-md-3">';
+                                htmlFitter += '<div class="card" style = "width: 18rem;">';
+                                if (itemProduct['HinhAnh'] != null)
+                                {
+                                    htmlFitter += '<img class="card-img-top" src = "/'+ itemProduct['HinhAnh']+'" alt="Card image cap" />';
+                                }
+                                else
+                                {
+                                    htmlFitter += '<img class="card-img-top" src = "/Storage/NoImage.jpg" alt = "Card image cap" />';
+
+                                }
+                                htmlFitter += '<div class="card-body">';
+                                htmlFitter += '<h5 class="card-title text-center">' + itemProduct['TenSanPham'] + '</h5 >';
+                                htmlFitter += '<p class="card-text text-center" >' + convertMoneyVND(itemProduct['GiaBan']) + '</p >';
+                                if (itemProduct['HinhAnh'] != null)
+                                {
+                                    htmlFitter += '<a href = "/Home/Detail?idProduct=' + itemProduct['MaSanPham'] + '" class="btn btn-primary">Xem chi tiết</a>';
+                                }
+                                htmlFitter += '</div>'; 
+                                htmlFitter += '</div>';
+                                htmlFitter += '</div>';
+                            });
+                            $('#listProduct').html(htmlFitter);
+                        }
+                    }
+                });
+            }
+            else {
+                alert("Vui lòng chọn 1 điều kiện lọc");
+                return;
+            }
+        });
+    }
+
+    $("#priceFitter").on("input change", function () {
+        //$('#priceFitterVal').attr('text', convertMoneyVND($('#priceFitter').val()));
+        var money = parseInt($('#priceFitter').val());
+        var convertMoney = convertMoneyVND(money);
+        $('#priceFitterVal').text(convertMoney);
+    });
+
+    function convertMoneyVND(x) {
+        return x = x.toLocaleString('it-IT', { style: 'currency', currency: 'VND' });
+    }
+</script>

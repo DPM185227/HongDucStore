@@ -1,0 +1,27 @@
+﻿@model HongDucStore.Models.NhanVien
+@{
+    ViewBag.Title = "Đăng nhập hệ thống";
+    Layout = "~/Areas/Admin/Views/Shared/_LayoutAdmin.cshtml";
+}
+<div class="container">
+    <div class="col-md-4" style="margin: auto; margin-top: 150px;">
+        <form action="@Url.Action("LoginAdmin","Home")" method="Post">
+            <h5 style="color:red;font-weight:bold;text-align:center">Đăng nhập</h5>
+            @if (ViewBag.ErrorLogin != null)
+            {
+                <span style="color:red;font-weight:bold;text-align:center">@ViewBag.ErrorLogin</span>
+            }
+            <div class="mb-3">
+                <label for="exampleInputEmail1" class="form-label">Tên đăng nhập</label>
+                <input class="form-control" name="TenDangNhap" id="exampleInputEmail1" aria-describedby="emailHelp">
+            </div>
+            <div class="mb-3">
+                <label for="exampleInputPassword1" class="form-label">Password</label>
+                <input type="password" name="MatKhau" class="form-control" id="exampleInputPassword1">
+            </div>
+            <button type="submit" class="btn btn-primary">Đăng nhập</button>
+        </form>
+    </div>
+</div>
+
+

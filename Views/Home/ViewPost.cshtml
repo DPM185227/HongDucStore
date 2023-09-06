@@ -1,0 +1,27 @@
+﻿@model HongDucStore.Models.BaiViet
+@using HongDucStore.Models;
+@{
+    ViewBag.Title = "Home Page";
+    var listColor = (List<MauSac>)ViewBag.listColor;
+    var listPost = (List<BaiViet>)ViewBag.listPost;
+    var KhachHang = (KhachHang)Session["KhachHang"];
+}
+<style>
+    img {
+        width:1230px;
+    }
+</style>
+<div class="card mt-3">
+    <h5 class="card-header bg-primary text-white text-center border-primary" style="font-weight:bold;">@Model.TenBaiViet</h5>
+    <div class="card-body">
+        <div class="container">
+            <div class="row">
+                <p class="card-title"><b>@Model.MoTaNgan</b></p>
+                <p class="card-text"> Thêm bởi: <b>@Model.NhanVien.TenNhanVien</b> Lượt xem: <i class="fas fa-eye">@Model.LuotXem</i></p>
+                <p>
+                    @Html.Raw(Model.NoiDung)
+                </p>
+            </div>
+        </div>
+    </div>
+</div>

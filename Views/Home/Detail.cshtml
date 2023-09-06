@@ -1,0 +1,212 @@
+﻿@model HongDucStore.Models.SanPham
+@using HongDucStore.Models;
+@{
+    ViewBag.Title = Model.TenSanPham;
+    var listColor = ViewBag.listColor != null ? (List<MauSac>)ViewBag.listColor : null;
+    var listComment = ViewBag.listComment != null ? (List<BinhLuan>)ViewBag.listComment : null;
+
+    var khachHangInfo = (KhachHang)Session["KhachHang"];
+}
+
+<div class="container mt-4">
+    <div class="row">
+        <!--image list-->
+        <div class="col-md-5 m-auto">
+            <div class="col-md-12">
+                @{
+                    var imageFirst = listColor.Where(m => m.MaSanPham == Model.MaSanPham && m.isCheck == 0).FirstOrDefault();
+                }
+                @if (imageFirst != null)
+                {
+                    <input id="ImageProduct" type="image" src="~/@imageFirst.HinhAnh" class="col-md-12" />
+                }
+            </div>
+            @if (listColor.Count() > 0)
+            {
+                <div class="listColor" style="margin:auto;">
+                    @foreach (var itemColor in listColor)
+                    {
+                        <input type="image" src="~/@itemColor.HinhAnh.Replace('\\', '/')" onclick="clickChangeImage(@itemColor.MaMau)" class="col-md-2" style="background-color:red;border-radius:50px;margin:auto;" />
+                    }
+                </div>
+            }
+        </div>
+        <div class="col-md-7">
+            <h5 id="productName" style="font-weight:bold;font-size:30px;text-align:center;">@Model.TenSanPham - @imageFirst.TenMau</h5>
+            @if (Model.GiaBan != null)
+            {
+                <p class="card-text text-center">@Model.GiaBan.Value.ToString("N0") <span>VND</span></p>
+            }
+            @if (Model.GiaGiam != null)
+            {
+                <p class="card-text text-center">@Model.GiaGiam.Value.ToString("N0")<span> VND</span> <del>@Model.GiaBan.Value.ToString("N0") <span>VND</span></del></p>
+            }
+            @if (Model.KhuyenMai != null)
+            {
+                <div class="card bg-primary text-white">
+                    <h5 class="card-header text-center fw-bold">Khuyến mãi</h5>
+                    <div class="card-body">
+                        <span>@Html.Raw(Model.KhuyenMai)</span>
+                    </div>
+                </div>
+            }
+            <hr />
+            <h5 style="font-weight:bold;color:black;">Mua hàng </h5>
+            @if (Session["KhachHang"] != null)
+            {
+                <input id="quantityBuy" type="number" min="1" value="1" style="border-radius:30px;" />
+                <input value="Đặt hàng" data-maMau="@imageFirst.MaMau" type="submit" id="btnAddToCart" class="btn btn-success text-white m-auto" />
+            }
+            else
+            {
+                <p>
+                    <a href="@Url.Action("UserLogin","Home")" class="btn btn-primary mt-2">Đăng nhập</a> để mua hàng
+                </p>
+            }
+        </div>
+    </div>
+    <hr />
+    <div class="row">
+        <!-- mô tả-->
+        <div class="col-md-7">
+            <div class="card">
+                <h5 class="card-header bg-success text-white">Mô tả sản phẩm</h5>
+                <div class="card-body">
+                    <h5 class="card-text">@Html.Raw(Model.MoTa)</h5>
+                </div>
+            </div>
+        </div>
+        <!-- bình luận-->
+        <div class="col-md-5">
+            <div class="card">
+                <h5 class="card-header bg-danger text-white-50">Bình luận</h5>
+                <div class="card-body">
+                    <!-- action-->
+                    @if (Session["KhachHang"] != null)
+                    {
+                        <div style="width:70%;margin:auto;">
+                            <div class="row">
+                                <input id="txtContent" placeholder="Nhập phản hồi của bạn" class="col-md-9" />
+                                <button id="btnAddComment" class="col-md-3 btn btn-primary">Đăng tải</button>
+                            </div>
+                        </div>
+                    }
+                    else
+                    {
+                        <span>Vui lòng <a class="btn btn-primary" href="@Url.Action("UserLogin","Home")">Đăng nhập</a> để bình luận</span>
+                    }
+                    <div class="row" id="commentList">
+                        @if (listComment != null)
+                        {
+                            foreach (var item in listComment.Where(m=>m.TinhTrang == 0))
+                            {
+                                <div class="col-md-6">
+                                    <img src="~/@item.KhachHang.HinhAnh" style="width:50px;height:50px;" />
+                                    <div class="col-md-12">
+                                        <span><b>@item.KhachHang.TenKhachHang</b></span>
+                                        <br />
+                                        <span>@item.NoiDung</span>
+                                    </div>
+                                </div>
+                            }
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    function clickChangeImage(MaMau) {
+        $.ajax({
+            type: "POST",
+            url: "/Home/changeColor/",
+            data: {
+                maMau: MaMau
+            },
+            dataType: "JSON",
+            success: function (reponse) {
+                // reset gia ban lai ban dau
+                $('#productPrice').attr('data-productPrice', @Model.GiaBan);
+                // gan hinh anh
+                $('#ImageProduct').attr('src', '/' + reponse.data.imageColor);
+                var productPriceUpdate = parseInt($('h6').attr('data-productPrice')) + parseInt(reponse.data.delta);
+                // cap nhat data
+                $('#productPrice').attr('data-productPrice', productPriceUpdate);
+                // hien len giao dien
+                $('#productPrice').text(convertMoneyVND(productPriceUpdate));
+                //
+                $('#productName').text(reponse.data.nameChange);
+                //
+                $('#btnAddToCart').attr('data-maMau', MaMau);
+                $(this).css({ "borders": "5px solid red"});
+            }
+        });
+    }
+
+    $('#btnAddToCart').on('click', function () {
+        var maSanPham = '@Model.MaSanPham';
+        var maMau = $(this).attr('data-maMau');
+        var quantityBuy = $('#quantityBuy').val();
+        $.ajax({
+            type: "Post",
+            url: "/Cart/AddToCart/",
+            data: {
+                maSanPham: maSanPham,
+                maMau: maMau,
+                quantityBuy: quantityBuy
+            },
+            dataType: "Json",
+            success: function (reponse) {
+                alert(reponse.msg);
+            }
+        });
+    });
+
+    function convertMoneyVND(x) {
+       return x = x.toLocaleString('it-IT', { style: 'currency', currency: 'VND' });
+    }
+
+    // add comment
+    $('#btnAddComment').on('click', function () {
+        var getContent = $('#txtContent').val();
+        if (getContent == null) {
+            alert("Vui lòng nhập nội dung");
+            return;
+        }
+        else {
+            $.ajax({
+                type: "GET",
+                url: "/Home/AddComment/",
+                data: {
+                    context: getContent,
+                    idProduct: '@Model.MaSanPham',
+                },
+                dataType: "Json",
+                contentType: "application/json;charset=utf-8",
+                success: function (result) {
+                    if (result.code == 200) {
+                        $(this).html('Loading.......');
+                        console.log(new Date(result.commentSuccess.CreateAt));
+                        var customerName = '@khachHangInfo.TenKhachHang';
+                        var outPut = '';
+                        alert(result.msg);
+                        outPut += '<div class="col-md-6">';
+                        outPut += '<img src="/' + result.commentSuccess.HinhAnh + '" style="width:50px;height:50px;"/>';
+                        outPut += '<div class="col-md-12">';
+                        outPut += '<span><b>' + customerName + '</b></span>  <br/>';
+                        outPut += '<span>' + result.commentSuccess.NoiDung + '</span>';
+                        outPut += '</div>';
+                        outPut += '</div>';
+                        $('#commentList').append(outPut);
+                        $(this).html('Đăng tải');
+                    }
+                    else {
+                        alert(result.msg);
+                    }
+                }
+            });
+        }
+    });
+</script>

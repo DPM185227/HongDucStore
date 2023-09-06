@@ -1,0 +1,54 @@
+﻿@model IEnumerable<HongDucStore.Models.DatHangChiTiet>
+
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Areas/Admin/Views/Shared/_LayoutAdmin.cshtml";
+}
+<h5 class="mt-3 text-center">ĐƠN HÀNG CHI TIẾT</h5>
+<table class="table">
+    <tr>
+        <th>STT</th>
+        <th>
+            @Html.DisplayNameFor(model => model.GiaBan)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.SoLuong)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.TongTien)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.MauSac.TenMau)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.SanPham.TenSanPham)
+        </th>
+    </tr>
+@{ 
+    int stt = 1;
+} 
+@foreach (var item in Model) {
+    <tr>
+        <td>
+            @stt
+        </td>
+        <td>
+            @item.GiaBan.Value.ToString("N0") <span> VND</span>
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.SoLuong)
+        </td>
+        <td>
+            @item.TongTien.Value.ToString("N0") <span> VND</span>
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.MauSac.TenMau)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.SanPham.TenSanPham)
+        </td>
+    </tr>
+    stt++;
+}
+
+</table>

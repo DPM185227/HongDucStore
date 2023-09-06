@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+ <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <!-- Diagram content (shape and connector positions) -->
+    <edmx:Diagrams>
+      <Diagram DiagramId="2d4a156b548948b8840fb6c1dd6d5175" Name="Diagram1" ZoomLevel="93">
+        <EntityTypeShape EntityType="XeMayHongDucModel.BaiViet" Width="1.5" PointX="6" PointY="2" IsExpanded="true" />
+        <EntityTypeShape EntityType="XeMayHongDucModel.BinhLuan" Width="1.5" PointX="8.25" PointY="7" IsExpanded="true" />
+        <EntityTypeShape EntityType="XeMayHongDucModel.ChiNhanh" Width="1.5" PointX="0.75" PointY="7.125" IsExpanded="true" />
+        <EntityTypeShape EntityType="XeMayHongDucModel.DanhMuc" Width="1.5" PointX="3.75" PointY="4.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="XeMayHongDucModel.DatHang" Width="1.5" PointX="3" PointY="6.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="XeMayHongDucModel.DatHangChiTiet" Width="1.5" PointX="10.5" PointY="10.125" IsExpanded="true" />
+        <EntityTypeShape EntityType="XeMayHongDucModel.HangXe" Width="1.5" PointX="3.75" PointY="11.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="XeMayHongDucModel.KhachHang" Width="1.5" PointX="0.75" PointY="2.875" IsExpanded="true" />
+        <EntityTypeShape EntityType="XeMayHongDucModel.LienHeBanXe" Width="1.5" PointX="8.75" PointY="0.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="XeMayHongDucModel.MauSac" Width="1.5" PointX="8.25" PointY="14" IsExpanded="true" />
+        <EntityTypeShape EntityType="XeMayHongDucModel.NhanVien" Width="1.5" PointX="3.75" PointY="14.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="XeMayHongDucModel.SanPham" Width="1.5" PointX="6" PointY="6.125" IsExpanded="true" />
+        <AssociationConnector Association="XeMayHongDucModel.FK_BaiViet_NhanVien" ManuallyRouted="false" />
+        <AssociationConnector Association="XeMayHongDucModel.FK_BinhLuan_BaiViet" ManuallyRouted="false" />
+        <AssociationConnector Association="XeMayHongDucModel.FK_BinhLuan_KhachHang" ManuallyRouted="false" />
+        <AssociationConnector Association="XeMayHongDucModel.FK_BinhLuan_SanPham" ManuallyRouted="false" />
+        <AssociationConnector Association="XeMayHongDucModel.FK_DatHang_ChiNhanh" ManuallyRouted="false" />
+        <AssociationConnector Association="XeMayHongDucModel.FK_SanPham_ChiNhanh" ManuallyRouted="false" />
+        <AssociationConnector Association="XeMayHongDucModel.FK_SanPham_DanhMucCon" ManuallyRouted="false" />
+        <AssociationConnector Association="XeMayHongDucModel.FK_DatHang_KhachHang" ManuallyRouted="false" />
+        <AssociationConnector Association="XeMayHongDucModel.FK_DatHang_MauSacXe" ManuallyRouted="false" />
+        <AssociationConnector Association="XeMayHongDucModel.FK_DatHangChiTiet_SanPham" ManuallyRouted="false" />
+        <AssociationConnector Association="XeMayHongDucModel.FK_SanPham_Hang" ManuallyRouted="false" />
+        <AssociationConnector Association="XeMayHongDucModel.FK_MauSac_SanPham" ManuallyRouted="false" />
+        <AssociationConnector Association="XeMayHongDucModel.FK_SanPham_NhanVien" ManuallyRouted="false" />
+        <AssociationConnector Association="XeMayHongDucModel.FK_DatHang_DatHangChiTiet" />
+      </Diagram>
+    </edmx:Diagrams>
+  </edmx:Designer>
+</edmx:Edmx>

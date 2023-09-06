@@ -1,0 +1,88 @@
+﻿@model HongDucStore.Models.KhachHang
+@{
+    ViewBag.Title = "Đăng nhập";
+}
+<div class="container shadow-sm" style="margin-top:50px;margin-bottom:50px;">
+    <div class="row">
+        <div class="col-md-6" style="border: 5px solid red;">
+            <img src="https://prices.vn/storage/photos/7/product/1595506010-xe-may-honda-winner-x-150cc-phien-ban-duong-dua0.jpeg" width="70%;" />
+        </div>
+        <div class="col-md-6 bg-danger" style="margin:auto;border-left:0px;">
+            <form style="height: 446.64px;padding-top:100px;color:white;" action="@Url.Action("UserLogin","Home")" method="post">
+                <h5 class="text-center fw-bold">ĐĂNG NHẬP</h5>
+                @if (ViewBag.Error != null)
+                {
+                    <script type="text/javascript">
+                        swal("Thất bại!", "@ViewBag.Error" + "!!!", "error");
+                    </script>
+                }
+                <div class="mb-2">
+                    <label for="exampleInputEmail1" class="form-label">Tên đăng nhập</label>
+                    <input type="text" class="form-control" name="userName" required aria-describedby="emailHelp" />
+                </div>
+                <div class="mb-3">
+                    <label for="exampleInputPassword1" class="form-label">Mật khẩu</label>
+                    <input type="password" class="form-control" name="passWord" required autocomplete="on" />
+                </div>
+                <button type="submit" id="btnLogin" class="btn btn-primary">Đăng nhập</button>
+                OR
+                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">Đăng ký</button>
+            </form>
+        </div>
+    </div>
+
+    <!--register-->
+    <!-- Modal -->
+    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="exampleModalLabel">Đăng ký tài khoản</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form action="@Url.Action("RegisterUser","Home")" method="post" enctype="multipart/form-data">
+                        <div class="form-group">
+                            <label class="form-label">Tên khách hàng</label>
+                            <input name="TenKhachHang" type="text" class="form-control" required />
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Địa chỉ</label>
+                            <input name="DiaChi" type="text" class="form-control" required />
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Số điện thoại</label>
+                            <input name="SoDienThoai" type="tel" class="form-control" required />
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Gmail</label>
+                            <input name="Gmail" type="email" class="form-control" required />
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">CCCD</label>
+                            <input name="CMT_CCCD" type="text" class="form-control" required />
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Tên đăng nhập</label>
+                            <input name="TenDangNhap" type="text" class="form-control" required />
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Mật khẩu</label>
+                            <input name="MatKhau" type="text" class="form-control" required />
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Hình ảnh</label>
+                            <input name="imageCustomer" type="file" class="form-control" required />
+                        </div>
+                        <hr />
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                            <button type="submit" class="btn btn-primary">Save changes</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>

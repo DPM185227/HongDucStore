@@ -1,0 +1,47 @@
+﻿@model IEnumerable<HongDucStore.Models.DatHang>
+@using HongDucStore.Models;
+@{
+    ViewBag.Title = "Đơn hàng của tôi";
+}
+
+<div class="card">
+    <h5 class="card-header bg-primary text-white text-center border-primary" style="font-weight:bold;">Đơn hàng của tôi</h5>
+    <div class="card-body">
+        <div class="container">
+            <div class="row">
+                @if (Model.Count() > 0)
+                {
+                    foreach (var itemOrder in Model.OrderByDescending(m => m.NgayLap))
+                    {
+                        <div class="col-md-3">
+                            <div class="card" style="width: 18rem;">
+                                <h5 class="card-header">@itemOrder.MaDatHang</h5>
+                                <div class="card-body">
+                                    <p class="card-text">Họ và tên: @itemOrder.HoTenNguoiNhan</p>
+                                    <p class="card-text">Số điện thoại: @itemOrder.SoDienThoai</p>
+                                    <p class="card-text">Chi nhánh nhận hàng: @itemOrder.ChiNhanh.TenChiNhanh</p>
+                                    <p class="card-text">Thời gian đăng ký: @itemOrder.ThoiGianNhanHang</p>
+                                    <hr />
+                                    <p class="card-text" style="margin-left:auto;">Tổng tiền: @itemOrder.TongTien.Value.ToString("N0") <span> VND</span></p>
+                                    <hr/>
+                                    <div class="row">
+                                        @if (itemOrder.TinhTrangDonHang != 5)
+                                        {
+                                            <a href="@Url.Action("CancelOrder","Home",new {idOrder = itemOrder.MaDatHang})"  class="col-md-6 btn btn-danger">Hủy đơn</a>
+                                            <a class="col-md-6 btn btn-primary" href="@Url.Action("OrderDetail","Home",new { idOrder = itemOrder.MaDatHang})">Xem chi tiết</a>
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                }
+                else
+                {
+                    <span>Hiện tại không có sản phẩm nào</span>
+                }
+            </div>
+        </div>
+    </div>
+
+</div>

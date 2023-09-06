@@ -1,0 +1,82 @@
+﻿@using HongDucStore.Models;
+@{
+    Layout = "../Shared/_LayoutAdmin.cshtml";
+    ViewBag.Title = "DashBoard";
+    var listOrder = (List<DatHang>)ViewBag.dataOrder;
+
+    var sumOrderToday = listOrder.Where(m => m.NgayLap == DateTime.Now.Date && m.TinhTrangDonHang == 4).Sum(m => m.TongTien);
+    var sumOrderMonth = listOrder.Where(m => m.NgayLap.Month == DateTime.Now.Month && m.TinhTrangDonHang == 4).Sum(m => m.TongTien);
+    var sumOrderYear = listOrder.Where(m => m.NgayLap.Year == DateTime.Now.Year && m.TinhTrangDonHang == 4).Sum(m => m.TongTien);
+    var orderConfirm = listOrder.Where(m => m.TinhTrangDonHang == 4).Sum(m => m.MaDatHang);
+    var orderSum = listOrder.Count();
+
+    var listProduct = (List<MauSac>)ViewBag.Color;
+    var checkInEnd = listProduct.Where(m => m.SoLuong < 2).ToList();
+}
+<script type="text/javascript">
+window.onload = function () {
+
+var chart = new CanvasJS.Chart("chartContainer", {
+	animationEnabled: true,
+	theme: "dark2", // "light1", "light2", "dark1", "dark2"
+	title: {
+		text: "SƠ ĐỒ BÁN HÀNG"
+	},
+	subtitles: [{
+		text: "Sơ đồ thu nhập theo khách hàng",
+		fontSize: 18
+	}],
+	axisY: {
+		title: "Tổng thu nhập",
+		logarithmic: true
+	},
+	data: [{
+		type: "column",
+		indexLabelFontColor: "white",
+		indexLabel: "{y}",
+		indexLabelFontSize: 16,
+		yValueFormatString: "#,##0.# mn",
+		toolTipContent: "<b>{label}: {y}</b> miles",
+		dataPoints:  @Html.Raw(ViewBag.dataPoints)
+	}]
+});
+chart.render();
+
+}
+</script>
+<div class="container">
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card">
+                <h5 class="card-header bg-primary text-white"><i class="fa fa-pie-chart"></i>DOANH THU</h5>
+                <div class="card-body">
+                    <p class="card-title">Doanh thu Ngày @DateTime.Now.ToShortDateString(): <b>@sumOrderToday.Value.ToString("N0")<span> VND</span></b> </p>
+                    <p class="card-title">Doanh thu Tháng @DateTime.Now.Month.ToString(): <b>@sumOrderMonth.Value.ToString("N0")<span> VND</span></b></p>
+                    <p class="card-title">Doanh thu Năm @DateTime.Now.Year.ToString(): <b>@sumOrderYear.Value.ToString("N0")<span> VND</span></b></p>
+                    <p class="card-title">Tổng đơn hàng: <b>@orderSum</b></p>
+                    <p class="card-title">Đơn hàng thành công: <b>@orderConfirm</b></p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card">
+                <h5 class="card-header bg-primary text-white"><i class="fa fa-pie-chart"></i>SẢN PHẨM</h5>
+                <div class="card-body">
+                    <p class="card-title">Tổng sản phẩm: <b>@listProduct.Count()</b></p>
+                    <p class="card-title">Sản phẩm sắp hết hàng:@checkInEnd.Count() <b></b></p>
+                    @if (checkInEnd.Count() > 0)
+                    {
+                        foreach (var item in checkInEnd)
+                        {
+                            <p class="card-title">- <a href="@Url.Action("Edit","MauSac",new { id = item.MaMau})" class="btn btn-outline-danger"> @item.SanPham.TenSanPham</a></p>
+                        }
+                    }
+                </div>
+            </div>
+        </div>
+        <div class="row mt-3">
+            <div id="chartContainer" style="height: 370px; width: 100%;"></div>
+            <script src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
+        </div>
+    </div>
+</div>

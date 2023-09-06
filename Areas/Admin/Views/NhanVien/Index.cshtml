@@ -1,0 +1,83 @@
+﻿@model IEnumerable<HongDucStore.Models.NhanVien>
+
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Areas/Admin/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+<h2>Index</h2>
+
+<p>
+    @Html.ActionLink("Create New", "Create")
+</p>
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.TenNhanVien)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.DiaChi)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.SoDienThoai)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.CMT_CCCD)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.LoaiTaiKhoan)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.KichHoat)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.HinhAnh)
+        </th>
+        <th></th>
+    </tr>
+
+@foreach (var item in Model) {
+    <tr>
+        <td>
+            @Html.DisplayFor(modelItem => item.TenNhanVien)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.DiaChi)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.SoDienThoai)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.CMT_CCCD)
+        </td>
+        <td>
+            @if (item.LoaiTaiKhoan == 0)
+            {
+                <span class="badge text-bg-primary">Admin</span>
+            }
+            else
+            {
+                <span class="badge text-bg-success">Nhân viên</span>
+            }
+        </td>
+        <td>
+            @if (item.KichHoat == 0)
+            {
+                <span class="badge text-bg-primary">Đang dùng</span>
+            }
+            else
+            {
+                <span class="badge text-bg-success">Bị khóa</span>
+            }
+        </td>
+        <td>
+           <img src="~/@item.HinhAnh" width="100" />
+        </td>
+        <td>
+            @Html.ActionLink("Edit", "Edit", new { id=item.MaNhanVien }) |
+            @Html.ActionLink("Delete", "Delete", new { id=item.MaNhanVien })
+        </td>
+    </tr>
+}
+
+</table>

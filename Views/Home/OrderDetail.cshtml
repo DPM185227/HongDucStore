@@ -1,0 +1,42 @@
+﻿@model IEnumerable<HongDucStore.Models.DatHangChiTiet>
+@using HongDucStore.Models;
+@{
+    ViewBag.Title = "Home Page";
+    var listColor = (List<MauSac>)ViewBag.listColor;
+}
+
+<div class="card">
+    <h5 class="card-header bg-primary text-white text-center border-primary" style="font-weight:bold;">ĐƠN HÀNG CHI TIẾT</h5>
+    <div class="card-body">
+        <div class="container">
+            <div class="row">
+                <table class="table table-bordered">
+                    <tr>
+                        <th>STT</th>
+                        <th>Tên sản phẩm</th>
+                        <th>Tên màu</th>
+                        <th>Giá bán</th>
+                        <th>Số lượng</th>
+                        <th>Tổng tiền</th>
+                    </tr>
+                    @if (Model.Count() > 0)
+                    {
+                        int stt = 1;
+                        foreach (var itemDetail in Model.OrderByDescending(m => m.STT))
+                        {
+                            <tr>
+                                <td>@stt</td>
+                                <td>@itemDetail.SanPham.TenSanPham</td>
+                                <td>@itemDetail.MauSac.TenMau</td>
+                                <td>@itemDetail.GiaBan.Value.ToString("N0") <span> VND</span></td>
+                                <td>@itemDetail.SoLuong</td>
+                                <td>@itemDetail.TongTien.Value.ToString("N0") <span> VND</span></td>
+                            </tr>
+                            stt++;
+                        }
+                    }
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

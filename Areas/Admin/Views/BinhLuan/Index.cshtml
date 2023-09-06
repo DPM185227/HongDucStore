@@ -1,0 +1,83 @@
+﻿@model IEnumerable<HongDucStore.Models.BinhLuan>
+
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Areas/Admin/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+<h2>Quản lý bình luận</h2>
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.NoiDung)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.TaoLuc)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.TinhTrang)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.BaiViet.TenBaiViet)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.KhachHang.TenKhachHang)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.SanPham.TenSanPham)
+        </th>
+        <th></th>
+    </tr>
+
+@foreach (var item in Model) {
+    <tr>
+        <td>
+            @Html.DisplayFor(modelItem => item.NoiDung)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.TaoLuc)
+        </td>
+        <td>
+            @if (item.TinhTrang == 0)
+            {
+                <input type="checkbox" checked onclick="clickChange(@item.IDComment)" />
+            }
+            else
+            {
+                <input type="checkbox" onclick="clickChange(@item.IDComment)" />
+            }
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.BaiViet.TenBaiViet)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.KhachHang.TenKhachHang)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.SanPham.TenSanPham)
+        </td>
+        <td>
+            @Html.ActionLink("Edit", "Edit", new { id=item.IDComment }) |
+            @Html.ActionLink("Delete", "Delete", new { id=item.IDComment })
+        </td>
+    </tr>
+}
+
+</table>
+
+<script type="text/javascript">
+    function clickChange(idComment) {
+        $.ajax({
+            type: "GET",
+            url: "/Admin/BinhLuan/isCheck",
+            data: {
+                idComment: idComment,
+            },
+            dataType: "JSon",
+            success: function (reponse) {
+                location.reload(true);
+                alert(reponse.msg);
+            }
+        });
+    }
+</script>

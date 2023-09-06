@@ -1,0 +1,88 @@
+﻿@model IEnumerable<HongDucStore.Models.SanPham>
+
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Areas/Admin/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+<h2>Index</h2>
+
+<p>
+    @Html.ActionLink("Create New", "Create","SanPham")
+</p>
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.TenSanPham)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.GiaBan)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.GiaGiam)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.ChiNhanh.TenChiNhanh)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.DanhMuc.TenDanhMuc)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.HangXe.TenHang)
+        </th>
+        <td>
+            Màu
+        </td>
+        <td>
+            Bình Luận
+        </td>
+        <th></th>
+    </tr>
+
+@foreach (var item in Model) {
+    <tr>
+        <td>
+            @Html.DisplayFor(modelItem => item.TenSanPham)
+        </td>
+        <td>
+            @if (item.GiaBan != null)
+            {
+                @item.GiaBan.Value.ToString("N0") <span>VND</span>
+            }
+        </td>
+        <td>
+            @if (item.GiaGiam != null)
+            {
+                @item.GiaGiam.Value.ToString("N0") <span>VND</span>
+            }
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.ChiNhanh.TenChiNhanh)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.DanhMuc.TenDanhMuc)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.HangXe.TenHang)
+        </td>
+        <td>
+            @if (item.HinhAnh == null)
+            {
+                <a href="@Url.Action("Index", "MauSac", new { idProduct = item.MaSanPham })" class="btn btn-primary">Thêm màu</a>
+            }
+            else
+            {
+                <img src="~/@item.HinhAnh" width="100" />
+            }
+        </td>
+        <td>
+            <a class="btn btn-outline-primary" href="@Url.Action("Index", "BinhLuan", new { idProduct = item.MaSanPham })">Bình luận</a>
+        </td>
+        <td>
+            <a class="btn btn-outline-info" href="@Url.Action("Edit","BinhLuan",new { id = item.MaSanPham})">Sửa</a>
+            <a class="btn btn-outline-danger" href="@Url.Action("Delete","BinhLuan",new { id = item.MaSanPham})">Xóa</a>
+        </td>
+    </tr>
+}
+
+</table>

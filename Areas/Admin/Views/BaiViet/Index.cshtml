@@ -1,0 +1,87 @@
+﻿@model IEnumerable<HongDucStore.Models.BaiViet>
+
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Areas/Admin/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+<h2>Index</h2>
+
+<p>
+    @Html.ActionLink("Create New", "Create")
+</p>
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.TenBaiViet)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.MoTaNgan)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.LuotXem)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.XetDuyet)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.HinhAnh)
+        </th>
+        <td>
+            Bình luận
+        </td>
+        <th></th>
+    </tr>
+
+@foreach (var item in Model) {
+    <tr>
+        <td>
+            @Html.DisplayFor(modelItem => item.TenBaiViet)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.MoTaNgan)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.LuotXem)
+        </td>
+        <td>
+            @if (item.XetDuyet == 0)
+            {
+                <input type="checkbox" checked onclick="clickChange(@item.MaBaiViet)" />
+            }
+            else if(item.XetDuyet == 1)
+            {
+                <input type="checkbox" onclick="clickChange(@item.MaBaiViet)" />
+            }
+        </td>
+        <td>
+            <img src="~/@item.HinhAnh" width="100" />
+        </td>
+        <td>
+            <a href="@Url.Action("Index","BinhLuan",new { idPost = item.MaBaiViet})" class="btn btn-outline-primary">Bình luận</a>
+        </td>
+        <td>
+            @Html.ActionLink("Edit", "Edit", new { id=item.MaBaiViet }) |
+            @Html.ActionLink("Delete", "Delete", new { id=item.MaBaiViet })
+        </td>
+    </tr>
+}
+
+</table>
+
+<script type="text/javascript">
+    function clickChange(idBaiViet) {
+        $.ajax({
+            type: "GET",
+            url: "/Admin/BaiViet/isCheck",
+            data: {
+                idBaiViet: idBaiViet,
+            },
+            dataType: "JSon",
+            success: function (reponse) {
+                location.reload(true);
+                alert(reponse.msg);
+            }
+        });
+    }
+</script>
